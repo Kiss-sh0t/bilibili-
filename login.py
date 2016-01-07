@@ -64,7 +64,7 @@ def getcookie(url):
 #not work yet
 def changeinfo(cookie):
 	posturl = "https://account.bilibili.com/site/UpdateSetting"
-	data = {'birthday':'1994-02-02','city':'1','datingtype':'1','marital':'1','province':'2','sex':'男','sign':'this is anthor test sign','uname':'忍下心kisshot'}
+	data = {'birthday':'1994-02-02','city':'1','datingtype':'1','marital':'1','province':'2','sex':'男','sign':'this is anthor test sign','uname':'2333'}
 	req = urllib2.Request(posturl)
 	req.add_header('Cookie',cookie)
 	data = urllib.urlencode(data)
