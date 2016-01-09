@@ -64,14 +64,22 @@ def getcookie(url):
 #not work yet
 def changeinfo(cookie):
 	posturl = "https://account.bilibili.com/site/UpdateSetting"
-	data = {'birthday':'1994-02-02','city':'1','datingtype':'1','marital':'1','province':'2','sex':'男','sign':'this is anthor test sign','uname':'2333'}
+	data = {'birthday':'1994-02-02','city':'0','datingtype':'0','marital':'0','province':'0','sex':'女','sign':'this is anthor test sign','uname':'忍下心kisshot'}
 	req = urllib2.Request(posturl)
+	req.add_header('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+	req.add_header('X-Requested-With','XMLHttpRequest')
+	req.add_header('User-Agent','Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.116')
 	req.add_header('Cookie',cookie)
+	req.add_header('Referer', 'https://account.bilibili.com/site/setting')
 	data = urllib.urlencode(data)
 	response = urllib2.urlopen(req,data)
 	jsonText = response.read()
 	text = json.loads(jsonText)
-	print text
+	if text['status'] == True:
+		print 'change success'
+	else:
+		print 'change failed'
+		exit()
 
 #process cookie
 def proc_cookie(cookie):
