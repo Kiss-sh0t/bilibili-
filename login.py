@@ -117,6 +117,29 @@ def addatention(fid,cookie):
 		print '[-] Add attention failed!'
 		exit(1)
 
+#add commit
+#oid is the av number of the video
+def addcommit(commit, cookie, oid):
+	posturl = 'http://api.bilibili.com/x/reply/add'
+	data = {'jsonp':'jsonp','message':commit,'type':1,'oid':oid}
+	req = urllib2.Request(posturl)
+	req.add_header('User-Agent','Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.8.0')
+	req.add_header('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+	req.add_header('Accept','application/json, text/javascript, */*; q=0.01')
+	req.add_header('Accept-Language', 'en-US,en;q=0.5')
+	req.add_header('X-Requested-With','XMLHttpRequest')
+	req.add_header('Referer','http://www.bilibili.com')
+	req.add_header('Cookie', 'a')
+	data = urllib.urlencode(data)
+	response = urllib2.urlopen(req,data)
+	jsonText = response.read()
+	text = json.loads(jsonText)
+	if text['code'] == -101:
+		print '[-] need login! '
+		exit()
+	if text['code'] == 0:
+		print '[+] commit success!'
+
 #main
 def main():
 	#config of username and password
@@ -127,7 +150,6 @@ def main():
 	domain = postdata(user,enc)
 	cookie = getcookie(domain)
 	cookies = proc_cookie(cookie)
-	changeinfo(cookies)
 	#addatention('100',cookies)
 
 if __name__ == '__main__':
