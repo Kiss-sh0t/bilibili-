@@ -140,17 +140,46 @@ def addcommit(commit, cookie, oid):
 	if text['code'] == 0:
 		print '[+] commit success!'
 
+#click on like
+def click_on_like(oid,rpid,cookie):
+	posturl = 'http://api.bilibili.com/x/reply/action'
+	data = {'jsonp':'jsonp','oid':oid,'type':1,'rpid':rpid,'action':1}
+	req = urllib2.Request(posturl)
+	req.add_header('User-Agent','Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0 Iceweasel/31.8.0')
+	req.add_header('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8')
+	req.add_header('Accept','application/json, text/javascript, */*; q=0.01')
+	req.add_header('Accept-Language', 'en-US,en;q=0.5')
+	req.add_header('X-Requested-With','XMLHttpRequest')
+	req.add_header('Referer','http://www.bilibili.com/video/av'+str(oid)+'/')
+	req.add_header('Cookie', cookie)
+	data = urllib.urlencode(data)
+	response = urllib2.urlopen(req,data)
+	jsonText = response.read()
+	text = json.loads(jsonText)
+	if text['code'] == 0:
+		print '[+] Click on like success!'
+		return 
+	elif text['code'] == -101:
+		print '[-] Need to login!'
+	else:
+		print '[-] Please don\'t click twice!'
+	exit()
+
 #main
 def main():
 	#config of username and password
 	user = 'yourusername'
-	passwd = 'yourpassword'
+	passwd = 'yourpasswd'
 	token = gethash()
 	enc = encryptpwd(passwd, token)
 	domain = postdata(user,enc)
 	cookie = getcookie(domain)
 	cookies = proc_cookie(cookie)
+	#changeinfo(cookies)
 	#addatention('100',cookies)
+	#addcommit('娘口三三',cookies,1913027)
+	click_on_like(1913027,80104851,cookies)
 
 if __name__ == '__main__':
 	main()
+	
