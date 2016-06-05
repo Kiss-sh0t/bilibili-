@@ -5,8 +5,12 @@ import binascii
 import json
 import re
 import time
+import random
 
-
+username = 'user'
+passwd = 'pass'
+#弹幕文件位置
+danmufile = ''
 
 session = requests.Session()
 
@@ -25,9 +29,7 @@ im.show()
 
 jsonText = session.get('http://passport.bilibili.com/login?act=getkey', cookies=sessionCookies)
 token = json.loads(jsonText.content)
-print jsonText.content
-username = 'user'
-passwd = 'pass'
+#set your username and passwd here
 vdcode = raw_input('Enter captcha > ')
 def encryptpwd(passwd,token):
     password = token['hash'] + passwd
@@ -61,19 +63,43 @@ t = time.strftime('%Y-%m-%d %H:%M:%S')
 #aid为视频的av号
 #弹幕内容，当前时间和视频时间，视频时间以秒记，比如在1分20，时间就是80.00
 #字号有两种，一种18，一种25
-def postdanmu(content, t, pt, fsize=25, color=0xffffff, mod=1): 
+def postdanmu(content, t, pt, fsize=25, color=0xffffff, mod=1):
+    t = time.strftime('%Y-%m-%d %H:%M:%S')
     postdata = {
         'mode': mod, #5为顶端弹幕，1为滚动字幕，4为低端渐隐
-        'color': str(int(color)), #颜色用16进制
+        'color': str(int(color)), #还没测试其他颜色，先用白的试试吧
         'message': content, #弹幕内容
         'pool':'0', #这个字段什么鬼
         'playTime': pt, #在视频中的时间轴，单位为秒，小数点后两位
         'cid': cid, 
         'fontsize': fsize, #字体大小，两种规格，这个是那个小的
-        'rnd': 1485737224, #算了，随便生成一个好了_(:з」∠)_。投不同视频请使用不同rnd值
+        'rnd': int(random.uniform(1000000000,2000000000)), #好像是个时间参数，蛋疼啊，到底怎么来的，算了，随便生成一个好了_(:з」∠)_
         'data': str(t) 
     }
     return session.post('http://interface.bilibili.com/dmpost?cid='+str(cid)+'&aid='+str(av)+'&pid=1', postdata)
 
 #测试
-test = postdanmu('第几？', t, 30.08, mod=5, color=0x33ff00)#顶端，绿色
+#test = postdanmu("你/n要/n的/n竖/n着/n的/n弹/n幕", t, 6.08, mod=5, color=0x33ff00)#顶端，绿色
+
+#测试顶端字符画
+content = '''
+　　　r　　　　　　　r　　　
+　　　　r　　　　　r　　　　
+jjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+j　　　j　　　　　r　　　　jj
+j　　rj　　　　　　jf　　　j
+j　　　　　　　　　　　　　jj
+j　　　　　nnn　　　　　　jj
+j　　　　　　　　　　　　　jj
+jjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+　　　　n　　　　　　n　　　
+'''
+
+#注意空格全部为全角
+f = open(danmufile)
+tim = 47.10
+for line in f.readlines():
+    test = postdanmu(line.rstrip(), t, tim, mod=5, color=0x33ff00)#顶端，绿色
+    tim = tim + 0.10
+    print test.content
+    time.sleep(15)#没具体测试，但时间间隔过短会报错
